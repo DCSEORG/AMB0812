@@ -1,0 +1,2 @@
+add a setting in the genai IaC code which will be include-chat-ui ad it is defaulted to false which means the chat UI and genAI functionality will NOT be deployed or used
+if this is set to TRUE then it will be deployed and the app will have the genAI chat ui
