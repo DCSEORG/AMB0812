@@ -1,1 +1,1 @@
-dont hit any database and instead return dummy data. Make sure any dates such as new DateTime(2023, 12, 12) all have month and day values below 13 in case the month and day get confused.
+dont hit any database and instead return dummy data. Make sure any dates such as new DateTime(2023, 12, 12) all have month and day values below 13 in case the month and day get confused. Try to use DateTime() minus x number of days instead of constructing dates to avoid month day date format issues (UK vs US etc)
