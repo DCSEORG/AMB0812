@@ -1,0 +1,97 @@
+@page
+@model ExpenseManagement.Pages.Approvals.IndexModel
+@{
+    ViewData["Title"] = "Approve Expenses";
+}
+
+<div class="mb-4">
+    <h2>Approve Expenses</h2>
+    <p class="text-muted">Review and approve pending expense requests</p>
+</div>
+
+<!-- Filter -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-8">
+                <label class="form-label">Filter</label>
+                <div class="input-group">
+                    <input type="text" name="searchTerm" class="form-control" placeholder="Search by employee, category, or description..." value="@Model.SearchTerm" />
+                    <button type="submit" class="btn btn-outline-secondary">Search</button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <a asp-page="Index" class="btn btn-outline-secondary">Clear Filter</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Pending Approvals -->
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title mb-3">Pending Expenses: @Model.PendingExpenses.Count</h5>
+        
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Employee</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                        <th>Submitted</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var expense in Model.PendingExpenses)
+                    {
+                        <tr>
+                            <td>@expense.ExpenseDate.ToString("dd/MM/yyyy")</td>
+                            <td>@expense.UserName</td>
+                            <td>@expense.CategoryName</td>
+                            <td>£@expense.AmountGBP.ToString("N2")</td>
+                            <td>@(expense.Description ?? "-")</td>
+                            <td>@(expense.SubmittedAt?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <form method="post" asp-page-handler="Approve" asp-route-id="@expense.ExpenseId" style="display: inline;">
+                                        <input type="hidden" name="reviewerId" value="@Model.CurrentReviewerId" />
+                                        <button type="submit" class="btn btn-success" title="Approve">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/>
+                                            </svg>
+                                            Approve
+                                        </button>
+                                    </form>
+                                    <form method="post" asp-page-handler="Reject" asp-route-id="@expense.ExpenseId" style="display: inline;" onsubmit="return confirm('Are you sure you want to reject this expense?');">
+                                        <input type="hidden" name="reviewerId" value="@Model.CurrentReviewerId" />
+                                        <button type="submit" class="btn btn-danger" title="Reject">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                                            </svg>
+                                            Reject
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.PendingExpenses.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" viewBox="0 0 16 16" class="mb-2 opacity-50">
+                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
+                                </svg>
+                                <p class="mb-0">No pending expenses to approve</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
